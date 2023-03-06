@@ -121,7 +121,14 @@ public class Wiki {
         }
         /*If more than one argument is passed, print error and exit program*/
         if (arguments.length > 1) {
-            System.err.println("Extra parameters specified." + usageMsg);
+            StringBuilder str = new StringBuilder();
+            str.append("Unmatched arguments from index 1:");
+            for(int i=1; i<arguments.length;i++) {
+                str.append(" '").append(arguments[i]).append("',");
+            }
+            str.deleteCharAt(str.length()-1); //Delete the comma at the end before appending usageMsg
+            str.append(usageMsg);
+            System.err.println(str);
             System.exit(1);
         }
         /*No usage problems, proceed with the program*/

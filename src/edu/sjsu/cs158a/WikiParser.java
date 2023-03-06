@@ -18,9 +18,13 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
             "Here is a link <a href=\"https://www.wikipedia.com/wiki/Lin#ux\" down>cool</a>\n";
 
     private String title;
+    /* A status boolean used to store the title of the wikipedia page */
     private Boolean inTitle = false;
+    /* duplicateChecker hash set used for checking whether a link is unique and not a duplicate */
     private HashSet<String> duplicateChecker = new HashSet<>();
+    /* children arraylist stores all redirect links on a Wikipedia page. */
     private ArrayList<String> children = new ArrayList<>();
+
     //How do these callBacks() detect the tags or text?
     //Answ: The ParserDelegator object's parse method will call the handle methods of the MyParserCallback object
     //      for us.
@@ -79,10 +83,11 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
         super.handleText(data, pos);
     }
 
+    /* Return title of current page */
     public String getTitle() {
         return title;
     }
-
+    /* Return an arraylist of all unique hyperlinks in the wikipedia page */
     public ArrayList<String> getChildren() {
         return children;
     }
