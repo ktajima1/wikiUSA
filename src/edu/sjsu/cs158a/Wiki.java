@@ -21,40 +21,44 @@ public class Wiki {
         /* Target to search for */
         String target = "/wiki/Geographic_coordinate_system";
 
-        boolean notFound = true;
+        boolean notFoundInParent = true;
         /* The parseFor() method will return "null" if the target wikipedia page was found in the first wikipedia page
          * The parseFor() method will return an arrayList of the subject's children if the target is not found */
         ArrayList<String> children = parseFor(subject, target, true);
         /* Indicator will be used to indicate whether the target page is found among the children of the subject */
-        ArrayList<String> indicator = new ArrayList<>();
+        ArrayList<String> targetFoundIndicator = new ArrayList<>();
 
+        /* If the target wikipedia page is found in parent page. Set notFoundInParent to false so that the children of
+         * the page is not parsed.
+         * If the target was not found, then ignore this if-block and continue searching the children pages for target */
         if(children==null) {
-            notFound = false;   //Target page was not found in the parsed parent page, check the children of page next
+            notFoundInParent = false;
         }
         /* Check the children of subject for target wikipedia page */
-        if(notFound) {
+        if(notFoundInParent) {
             System.out.println("Checking children:");
             for (String child: children) {
-                while(indicator!=null) {
+                while(targetFoundIndicator!=null) {
                     String nextSubject = child.split("/wiki/")[1];
-                    indicator = parseFor(nextSubject, target, false); //Returns null if target is found, returns new children if otherwise
+                    targetFoundIndicator = parseFor(nextSubject, target, false); //Returns null if target is found, returns new children if otherwise
                     break;  //break out of while loop
                 }
             }
-            if(indicator!=null) {
+            if(targetFoundIndicator!=null) {
                 System.out.println("Not found");    //Target page not found in both parent or children pages
             }
         }
     }
 
     /* This parseFor() method will parse the wikipedia page of the specified subject, looking for a hyperlink that
-     * directs to the target wikipedia page. If "doPrintTitle" is true, then the message "Searching: <subject>" will
-     * be printed. Any invalid URLs will throw an error and terminate the program */
+     * redirects to the target wikipedia page. If "doPrintTitle" is true, then the message "Searching: <subject>" will
+     * be printed. Any invalid URLs (caused by invalid subject or broken links on page) will throw an error and
+     * terminate the program */
     public static ArrayList<String> parseFor(String subject, String target, boolean doPrintTitle) {
 
         WikiParser parpar = new WikiParser();
         String potentiallyInvalidURL = "";
-        /* This try-catch block is from Ben Reed's WebDump java class:
+        /* This try-catch block is from Ben Reed's WebDump java class and has been modified for this assignment:
          * https://github.com/breed/CS158A-SP23-class/blob/main/web/edu/sjsu/cs158a/web/WebDump.java */
         try {
             URL url = new URL("https://www.wikipedia.com/wiki/"+subject);
