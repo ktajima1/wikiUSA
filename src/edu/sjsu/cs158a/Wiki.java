@@ -50,7 +50,7 @@ public class Wiki {
         }
     }
 
-    /* This parseFor() method will parse the wikipedia page of the specified subject, looking for a hyperlink that
+    /* This parseFor() method will parse the wikipedia page of the specified subject, looking for THE FIRST link that
      * redirects to the target wikipedia page. If "doPrintTitle" is true, then the message "Searching: <subject>" will
      * be printed. Any invalid URLs (caused by invalid subject or broken links on page) will throw an error and
      * terminate the program */
@@ -97,7 +97,7 @@ public class Wiki {
             for (String s: parpar.getChildren()) {
                 if(s.equals(target)) {
                     System.out.println("Found in: " + parpar.getTitle());
-                    return null;
+                    return null; //Return null here so that only the FIRST matching link prints to output
                 }
             }
             /* Cleanup */
