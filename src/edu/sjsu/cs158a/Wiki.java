@@ -55,7 +55,10 @@ public class Wiki {
      * be printed. Any invalid URLs (caused by invalid subject or broken links on page) will throw an error and
      * terminate the program */
     public static ArrayList<String> parseFor(String subject, String target, boolean doPrintTitle) {
-
+        /* The wikiparser class is used to parse wikipedia pages for the title of the page and any redirect links
+         * on the page that redirect to another wikipedia page (which will be stored in a string ArrayList called
+         * children). The WikiParser object has getter methods for the title and children so that the parseFor() method
+         * can be called once more on the children arrayList to search for the target wikipedia page */
         WikiParser parpar = new WikiParser();
         String potentiallyInvalidURL = "";
         /* This try-catch block is from Ben Reed's WebDump java class and has been modified for this assignment:
@@ -64,21 +67,15 @@ public class Wiki {
             URL url = new URL("https://www.wikipedia.com/wiki/"+subject);
             potentiallyInvalidURL = url.toString();
             InputStream is = url.openStream(); //Opens an input stream that we can read from
-            byte[] bytes = new byte[1024];
-            /* "rc" stands for return code. When the input stream reads bytes from the URL, the read(bytes) method
-             * can return one of the three outputs: the number of bytes read and stored into the bytes array,
-             * 0 if the byte array is of length 0, and a -1 if the inputstream has reached the end of the file
+
+            /* Received advice from Professor Ben Reed during Monday office hours (3/6/2023) to use this
+             * InputStreamReader object to read from the input stream. This object eliminates the need for a
+             * byte array output stream to store and read bytes from the input stream
              *
-             * In networking, read() returns as soon as it gets something. read() will read the same number of bytes as
-             * its provided bytes[] array, and will read the remaining bytes once read() is called again (and again)*/
-            int rc;
-            /* This ByteArrayOutputStream is like a byte arraylist that will store all the bytes from the URL input stream
-             * bo will contain the entire HTML code of the wikipedia page */
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            while ((rc = is.read(bytes)) > 0) {
-                /* Write the data read from the InputStream to the ByteArrayOutputStream*/
-                bo.write(bytes, 0, rc);
-            }
+             * The ISR is passed into the delegator.parse() method so that the data stored in the ISR can be
+             * parsed for wikipedia links */
+            InputStreamReader isr = new InputStreamReader(is);
+
             /* The delegator allows us to parse the content of a file */
             ParserDelegator delegator = new ParserDelegator();
             //calling parse() will take an input and extract pieces from it according to some structure
@@ -86,7 +83,7 @@ public class Wiki {
             //The parse() call will take in the WikiParser that will parse the wikipedia page for any hyperlinks that
             //redirect to another wikipedia page (which will be collected in an arraylist called "children." WikiParser
             //has a getChildren() method that contains all wikipedia pages that the parsed page links to
-            delegator.parse(new StringReader(bo.toString()), parpar, true);
+            delegator.parse(isr, parpar, true);
 
             /* If "doPrintTitle" is true, print the title of the current wikipedia page */
             if (doPrintTitle) {
@@ -102,7 +99,7 @@ public class Wiki {
             }
             /* Cleanup */
             is.close();
-            bo.close();
+            isr.close();
         } catch (UnknownHostException | FileNotFoundException u) {
             System.err.println("Could not search: " + potentiallyInvalidURL);
             System.exit(1);

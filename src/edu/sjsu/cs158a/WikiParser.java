@@ -11,11 +11,11 @@ import java.util.HashSet;
 public class WikiParser extends HTMLEditorKit.ParserCallback {
     /* Example string used for testing */
     final static String exampleString = "<head><title>This is the title</title></head>\n" +
-            "Here is a link <a href=\"https://www.wikipedia.com/wiki/Linux\" down>cool</a>\n" +
+            "Here is a link <a href=\"/wiki/Linux\" down>cool</a>\n" +
             "Here is a link <a href=\"https://www.wikipedia.co\" down>cool</a>\n" +
-            "Here is a link <a href=\"https://www.wikipedia.com/wiki/Pluto\" down>cool</a>\n" +
-            "Here is a link <a href=\"https://www.wikipedia.com/wiki/Linux\" down>cool</a>\n" +
-            "Here is a link <a href=\"https://www.wikipedia.com/wiki/Lin#ux\" down>cool</a>\n";
+            "Here is a link <a href=\"/wiki/Pluto\" down>cool</a>\n" +
+            "Here is a link <a href=\"/wiki/Linux\" down>cool</a>\n" +
+            "Here is a link <a href=\"/wiki/Lin#ux\" down>cool</a>\n";
 
     private String title;
     /* A status boolean used to store the title of the wikipedia page */
@@ -40,24 +40,21 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
          * array if it is not a duplicate wikipedia link. Ignore any non-wikipedia links and duplicate links */
         if (HTML.Tag.A == t) {
 //            System.out.println("Got tag: " + t + " with attributes: " + a);
-            String[] attributesList = a.toString().split(" ");
-            for (String attribute : attributesList) {
-                if (attribute.startsWith("href=")) {
-                    String wikiLink = attribute.split("href=")[1];
-                    /* Three conditions to check before adding to children arraylist:
-                     *      - Must be a wikipedia link (not another website or a file extension)
-                     *      - Must be a unique wikipedia link (No duplicate links in children)
-                     *      - No colons, hashtags, or other characters that redirect to a section of the same page */
-                    if ((wikiLink.startsWith("/wiki/"))
-                            && (!wikiLink.split("/wiki/")[1].contains("#"))
-                            && (!wikiLink.split("/wiki/")[1].contains("%"))
-                            && (!wikiLink.split("/wiki/")[1].contains(":"))
-                            && (duplicateChecker.add(wikiLink))
-                    ) {
-                        /* Add the wikipedia link to children of page*/
-                        children.add(attribute.split("href=")[1]);
-                    }
-                }
+            /* Received advice from Professor Ben Reed during Monday office hours (3/6/2023) to use this
+             * a.getAttribute() method */
+            String link = (String)a.getAttribute(HTML.Attribute.HREF);
+            /* Four conditions to check before adding to children arraylist:
+             *      - Link must not be null (if MutableAttributeSet contains no href attribute, link will be null)
+             *      - Must be a wikipedia link (not another website or a file extension)
+             *      - Must be a unique wikipedia link (No duplicate links in children)
+             *      - URL must not contain colon characters; those URLs redirect to a section of the same page */
+            if ((!(link==null)
+                    && link.startsWith("/wiki/"))
+                    && (!link.contains(":"))
+                    && (duplicateChecker.add(link))
+            ) {
+                /* Add the wikipedia link to children of page*/
+                children.add(link);
             }
         }
         super.handleStartTag(t, a, pos);
@@ -77,7 +74,6 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
     public void handleText(char[] data, int pos) {
         if (inTitle) {
             title = new String(data);
-//                children.add(new String(data));
         }
 //        System.out.println("Got text: " + new String(data));
         super.handleText(data, pos);
@@ -91,8 +87,7 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
     public ArrayList<String> getChildren() {
         return children;
     }
-}
-/* Main function used for testing */
+//    /* Main function used for testing */
 //    public static void main(String args[]) throws Exception {
 //        System.out.println(exampleString);
 //        //allows us to get individual components of the page
@@ -106,3 +101,4 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
 //            System.out.println(s);
 //        }
 //    }
+}
