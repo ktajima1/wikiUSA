@@ -73,7 +73,7 @@ public class Wiki {
              * byte array output stream to store and read bytes from the input stream
              *
              * The ISR is passed into the delegator.parse() method so that the data stored in the ISR can be
-             * parsed for wikipedia links */
+             * parsed for any wikipedia links */
             InputStreamReader isr = new InputStreamReader(is);
 
             /* The delegator allows us to parse the content of a file */
