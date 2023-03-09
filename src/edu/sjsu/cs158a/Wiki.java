@@ -38,6 +38,7 @@ public class Wiki {
         if(notFoundInParent) {
             System.out.println("Checking children:");
             for (String child: children) {
+                //This while loop can be changed to an if statement once you change some code, but this works fine so this was left alone
                 while(targetFoundIndicator!=null) {
                     String nextSubject = child.split("/wiki/")[1];
                     targetFoundIndicator = parseFor(nextSubject, target, false); //Returns null if target is found, returns new children if otherwise
@@ -101,7 +102,7 @@ public class Wiki {
             is.close();
             isr.close();
         } catch (UnknownHostException | FileNotFoundException u) {
-            System.err.println("Could not search: " + potentiallyInvalidURL);
+            System.out.println("Could not search: " + potentiallyInvalidURL);
             System.exit(1);
         } catch (IOException e) {
             e.printStackTrace();

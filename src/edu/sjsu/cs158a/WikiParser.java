@@ -45,7 +45,7 @@ public class WikiParser extends HTMLEditorKit.ParserCallback {
             String link = (String)a.getAttribute(HTML.Attribute.HREF);
             /* Four conditions to check before adding to children arraylist:
              *      - Link must not be null (if MutableAttributeSet contains no href attribute, link will be null)
-             *      - Must be a wikipedia link (not another website or a file extension)
+             *      - Must be a wikipedia link (not another website or a file extension) and the href must start with /wiki/
              *      - Must be a unique wikipedia link (No duplicate links in children)
              *      - URL must not contain colon characters; those URLs redirect to a section of the same page */
             if ((!(link==null)
