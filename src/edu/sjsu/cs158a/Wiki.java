@@ -64,7 +64,7 @@ public class Wiki {
         /* This try-catch block is from Ben Reed's WebDump java class and has been modified for this assignment:
          * https://github.com/breed/CS158A-SP23-class/blob/main/web/edu/sjsu/cs158a/web/WebDump.java */
         try {
-            URL url = new URL("https://www.wikipedia.com/wiki/"+subject);
+            URL url = new URL("https://en.wikipedia.org/wiki/"+subject);
             potentiallyInvalidURL = url.toString();
             InputStream is = url.openStream(); //Opens an input stream that we can read from
 
